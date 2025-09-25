@@ -48,7 +48,7 @@ export default function SendEventEmail({
   const [sendToAll, setSendToAll] = useState(false);
 
   // Paginación
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20);
   const [total, setTotal] = useState(0);

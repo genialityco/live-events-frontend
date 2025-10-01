@@ -10,7 +10,6 @@ import {
   Pagination,
   TextInput,
   Group,
-  Checkbox,
   Button,
 } from "@mantine/core";
 
@@ -27,7 +26,6 @@ interface EventUser {
 export default function EventUsersPaginatedSelector({
   eventId,
   selected,
-  setSelected,
 }: {
   eventId: string;
   selected: string[];
@@ -40,7 +38,6 @@ export default function EventUsersPaginatedSelector({
   const [total, setTotal] = useState(0);
   const [filter, setFilter] = useState("");
   const [search, setSearch] = useState("");
-  const [selectAllPage, setSelectAllPage] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -51,27 +48,6 @@ export default function EventUsersPaginatedSelector({
       })
       .finally(() => setLoading(false));
   }, [eventId, page, pageSize, filter]);
-
-  useEffect(() => {
-    // Si "select all page" está activo, marca todos los ids visibles
-    if (selectAllPage) {
-      const ids = users.map((u) => u._id);
-      setSelected(Array.from(new Set([...selected, ...ids])));
-    } else {
-      // Quita los ids de la página actual si se desmarca "select all page"
-      const ids = users.map((u) => u._id);
-      setSelected(selected.filter((id) => !ids.includes(id)));
-    }
-    // eslint-disable-next-line
-  }, [selectAllPage, page]);
-
-  const handleCheck = (id: string, checked: boolean) => {
-    if (checked) {
-      setSelected([...selected, id]);
-    } else {
-      setSelected(selected.filter((s) => s !== id));
-    }
-  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,13 +63,9 @@ export default function EventUsersPaginatedSelector({
     );
   }
 
-  if (users.length === 0) {
-    return <Text c="dimmed">No hay asistentes registrados.</Text>;
-  }
-
-  // Para determinar si todos los usuarios de la página están seleccionados
-  const allPageSelected =
-    users.every((u) => selected.includes(u._id)) && users.length > 0;
+  // if (users.length === 0) {
+  //   return <Text c="dimmed">No hay asistentes registrados.</Text>;
+  // }
 
   return (
     <Paper shadow="xs" p="xs" radius="md" withBorder>
@@ -115,17 +87,6 @@ export default function EventUsersPaginatedSelector({
       <Table striped highlightOnHover withTableBorder>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>
-              <Checkbox
-                checked={allPageSelected}
-                onChange={(e) => setSelectAllPage(e.currentTarget.checked)}
-                indeterminate={
-                  !allPageSelected &&
-                  selected.some((id) => users.map((u) => u._id).includes(id))
-                }
-                title="Seleccionar todos de la página"
-              />
-            </Table.Th>
             <Table.Th>Nombre</Table.Th>
             <Table.Th>Email</Table.Th>
             <Table.Th>Perfil</Table.Th>
@@ -134,20 +95,18 @@ export default function EventUsersPaginatedSelector({
         <Table.Tbody>
           {users.map((user) => (
             <Table.Tr key={user._id}>
-              <Table.Td>
-                <Checkbox
-                  checked={selected.includes(user._id)}
-                  onChange={(e) =>
-                    handleCheck(user._id, e.currentTarget.checked)
-                  }
-                  title="Seleccionar usuario"
-                />
-              </Table.Td>
               <Table.Td>{user.properties.names || "-"}</Table.Td>
               <Table.Td>{user.properties.email || "-"}</Table.Td>
               <Table.Td>{user.properties.perfil || "-"}</Table.Td>
             </Table.Tr>
           ))}
+          {users.length === 0 && (
+            <Table.Tr>
+              <Table.Td colSpan={3}>
+                <Text c="dimmed">No hay asistentes registrados.</Text>
+              </Table.Td>
+            </Table.Tr>
+          )}
         </Table.Tbody>
       </Table>
       <Group justify="end" mt="md">

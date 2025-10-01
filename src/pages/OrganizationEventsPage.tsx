@@ -42,6 +42,7 @@ export default function OrganizationEventsPage() {
       <Table striped highlightOnHover withTableBorder>
         <Table.Thead>
           <Table.Tr>
+            <Table.Tr>Fecha</Table.Tr>
             <Table.Th>Nombre</Table.Th>
             <Table.Th>Acciones</Table.Th>
           </Table.Tr>
@@ -49,6 +50,14 @@ export default function OrganizationEventsPage() {
         <Table.Tbody>
           {events.map((event) => (
             <Table.Tr key={event._id}>
+              <Table.Td>
+                {new Date(event.datetime_from).toLocaleDateString("es-ES", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                })}
+              </Table.Td>
+
               <Table.Td>{event.name}</Table.Td>
               <Table.Td>
                 <Button

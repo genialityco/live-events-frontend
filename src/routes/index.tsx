@@ -16,11 +16,14 @@ import EventAdminAttendees from "../pages/event-admin/EventAdminAttendees";
 import EventAdminMail from "../pages/event-admin/EventAdminMail";
 import EventAdminSettings from "../pages/event-admin/EventAdminSettings";
 import EventAdminLoginLink from "../pages/event-admin/EventAdminLoginLink";
+import AdminUsersPage from "../pages/super-admin/AdminUsersPage";
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+
+      <Route path="/admin-users" element={<AdminUsersPage />} />
 
       <Route path="/organizations" element={<OrganizationsPage />} />
 

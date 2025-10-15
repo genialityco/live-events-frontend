@@ -1,3 +1,4 @@
+// src/pages/super-admin/AdminUsersPage.tsx
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -16,9 +17,9 @@ import {
   Pagination,
   Text,
 } from "@mantine/core";
-import { fetchUsers } from "../services/usersServices"; // GET /admin/users
-import { authUpdatePassword } from "../services/authService"; // POST /auth/update-password
-import type { AdminUser } from "../services/usersServices";
+import { fetchUsers } from "../../services/usersServices"; // GET /admin/users
+import { authUpdatePassword } from "../../services/authService"; // POST /auth/update-password
+import type { AdminUser } from "../../services/usersServices";
 
 export default function AdminUsersPage() {
   // tabla & búsqueda

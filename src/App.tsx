@@ -2,101 +2,121 @@
 import "@mantine/core/styles.css";
 import {
   AppShell,
-  Burger,
   Group,
   Title,
-  NavLink,
-  ScrollArea,
-  Button,
   Menu,
   Avatar,
   Text,
+  Image,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AppRoutes from "./routes";
 import { useAuth } from "./auth/useAuth";
+import {
+  IconBuildingStore,
+  IconCalendarEvent,
+  IconHome,
+  IconLogout,
+  IconUser,
+} from "@tabler/icons-react";
+import { OrgBrandingProvider, useOrgBranding } from "./brand";
 
-export default function App() {
-  const [opened, { toggle, close }] = useDisclosure(false);
-  const location = useLocation();
+function HeaderBar() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { branding } = useOrgBranding();
+
+  const goHome = () => navigate("/");
 
   return (
-    <AppShell
-      header={{ height: 56 }}
-      navbar={{ width: 260, breakpoint: "sm", collapsed: { mobile: !opened } }}
-      padding="md"
-    >
-      <AppShell.Header>
-        <Group h="100%" px="md" justify="space-between">
-          <Group gap="sm">
-            <Burger
-              opened={opened}
-              onClick={toggle}
-              hiddenFrom="sm"
-              size="sm"
+    <AppShell.Header>
+      <Group h="100%" px="md" justify="space-between">
+        <Group
+          gap="sm"
+          onClick={
+            branding.orgId
+              ? () => navigate(`/organizations/${branding.orgId}`)
+              : goHome
+          }
+          style={{ cursor: "pointer" }}
+        >
+          {branding.logoUrl ? (
+            <Image
+              src={branding.logoUrl}
+              alt={branding.name ?? "Logo"}
+              h={24}
+              fit="contain"
             />
-            <Title
-              order={4}
-              style={{ cursor: "pointer" }}
-              onClick={() => navigate("/")}
-            >
-              Mi Panel
-            </Title>
-          </Group>
-
-          <Group gap="xs">
-            <Button
-              size="xs"
-              variant="light"
-              onClick={() => navigate("/")}
-              hiddenFrom="xs"
-            >
-              Inicio
-            </Button>
-
-            <Menu shadow="md" width={220}>
-              <Menu.Target>
-                <Group gap={6} style={{ cursor: "pointer" }}>
-                  <Avatar
-                    radius="xl"
-                    size={28}
-                    src={user?.photoURL ?? undefined}
-                  />
-                  <Text size="sm">{user?.email ?? "Cuenta"}</Text>
-                </Group>
-              </Menu.Target>
-              <Menu.Dropdown>
-                <Menu.Item onClick={() => navigate("/")}>
-                  Mis organizaciones
-                </Menu.Item>
-                <Menu.Divider />
-                <Menu.Item color="red" onClick={logout}>
-                  Cerrar sesión
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          </Group>
+          ) : null}
+          <Title order={4}>{branding.name ?? "Mi Panel"}</Title>
         </Group>
-      </AppShell.Header>
 
-      <AppShell.Navbar p="xs">
-        <ScrollArea type="auto" style={{ height: "100%" }}>
-          <NavLink
-            label="Organizaciones"
-            component={Link}
-            to="/"
-            active={location.pathname === "/"}
-            onClick={close}
-          />
-        </ScrollArea>
-      </AppShell.Navbar>
+        <Group gap="xs">
+          <Menu shadow="md">
+            <Menu.Target>
+              <Group gap={6} style={{ cursor: "pointer" }}>
+                <Avatar
+                  radius="xl"
+                  size={28}
+                  src={user?.photoURL ?? undefined}
+                />
+                <Text size="sm">{user?.email ?? "Cuenta"}</Text>
+              </Group>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>Mi cuenta</Menu.Label>
 
-      <AppShell.Main>
-        <AppRoutes />
-      </AppShell.Main>
-    </AppShell>
+              <Menu.Item onClick={goHome} leftSection={<IconHome size={16} />}>
+                Inicio
+              </Menu.Item>
+
+              <Menu.Item
+                onClick={() => navigate("/organizations")}
+                leftSection={<IconBuildingStore size={16} />}
+              >
+                Mis Organizaciones
+              </Menu.Item>
+
+              <Menu.Item
+                onClick={() => navigate("/events")}
+                leftSection={<IconCalendarEvent size={16} />}
+              >
+                Mis Eventos
+              </Menu.Item>
+
+              <Menu.Item
+                onClick={() => navigate("/profile")}
+                leftSection={<IconUser size={16} />}
+              >
+                Perfil
+              </Menu.Item>
+
+              <Menu.Divider />
+
+              <Menu.Item
+                color="red"
+                onClick={logout}
+                leftSection={<IconLogout size={16} />}
+              >
+                Cerrar sesión
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </Group>
+      </Group>
+    </AppShell.Header>
+  );
+}
+
+export default function App() {
+  return (
+    <OrgBrandingProvider>
+      <AppShell header={{ height: 56 }} padding="md">
+        <HeaderBar />
+        <AppShell.Main>
+          <AppRoutes />
+        </AppShell.Main>
+      </AppShell>
+    </OrgBrandingProvider>
   );
 }

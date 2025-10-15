@@ -1,5 +1,5 @@
-// src/pages/LoginPage.tsx
-import { useState } from "react";
+// src/pages/auth/LoginPage.tsx
+import { useEffect, useState } from "react";
 import {
   Button,
   Paper,
@@ -10,26 +10,32 @@ import {
   Container,
 } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/useAuth";
+import { useAuth } from "../../auth/useAuth";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, loading, user, authorId } = useAuth();
   const [email, setEmail] = useState("ace@geniality.com.co");
-  const [password, setPassword] = useState("demo-password"); // pon tu pass real aquí
-  const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("123456");
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setSubmitting(true);
     try {
       await login(email, password);
-      navigate("/");
+      // NO navegues aquí
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
+  useEffect(() => {
+    // navega cuando el provider ya terminó de resolver
+    if (!loading && user /* opcional: && authorId */) {
+      navigate("/");
+    }
+  }, [loading, user, authorId, navigate]);
   return (
     <Container size="xs">
       <Paper withBorder p="lg" radius="md" mt="xl">
@@ -50,7 +56,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.currentTarget.value)}
               required
             />
-            <Button type="submit" loading={loading}>
+            <Button type="submit" loading={submitting}>
               Entrar
             </Button>
           </Stack>

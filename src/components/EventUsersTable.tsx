@@ -25,7 +25,6 @@ interface EventUser {
 
 export default function EventUsersPaginatedSelector({
   eventId,
-  selected,
 }: {
   eventId: string;
   selected: string[];
@@ -68,7 +67,7 @@ export default function EventUsersPaginatedSelector({
   // }
 
   return (
-    <Paper shadow="xs" p="xs" radius="md" withBorder>
+    <Paper>
       <Text size="sm" mb="md">
         Total de asistentes: {total}
       </Text>
@@ -116,7 +115,6 @@ export default function EventUsersPaginatedSelector({
           total={Math.ceil(total / pageSize)}
         />
       </Group>
-      <Text mt="md">Seleccionados: {selected.length} usuario(s)</Text>
     </Paper>
   );
 }

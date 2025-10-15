@@ -7,11 +7,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase";
 import { Ctx } from "./authContext";
-
-async function resolveAuthorIdForUser(user: User): Promise<string | null> {
-  if (user.email === "ace@geniality.com.co") return "62171ec163b90f7cc421c3a3";
-  return null;
-}
+import { fetchUserByEmail } from "../services/usersServices";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -21,9 +17,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
-      if (u) {
-        const aId = await resolveAuthorIdForUser(u);
-        setAuthorId(aId);
+      if (u && u.email) {
+        const user = await fetchUserByEmail(u.email);
+        setAuthorId(user._id);
       } else {
         setAuthorId(null);
       }

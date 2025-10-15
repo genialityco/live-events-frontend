@@ -27,7 +27,7 @@ export async function fetchUsers(params?: {
   limit?: number;
 }) {
   const { q, page = 1, limit = 20 } = params || {};
-  const { data } = await api.get<UsersPage>("/admin/users", {
+  const { data } = await api.get<UsersPage>("/users", {
     params: { q, page, limit },
   });
   return data;
@@ -35,7 +35,12 @@ export async function fetchUsers(params?: {
 
 // ---------- Traer uno por id ----------
 export async function fetchUserById(id: string) {
-  const { data } = await api.get<AdminUser>(`/admin/users/${id}`);
+  const { data } = await api.get<AdminUser>(`/users/${id}`);
+  return data;
+}
+
+export async function fetchUserByEmail(email: string) {
+  const { data } = await api.get<AdminUser>(`/users/by-email/${email}`);
   return data;
 }
 
@@ -44,6 +49,6 @@ export async function updateUserBasic(
   id: string,
   payload: Partial<Pick<AdminUser, "email" | "names" | "is_admin">>
 ) {
-  const { data } = await api.patch<AdminUser>(`/admin/users/${id}`, payload);
+  const { data } = await api.patch<AdminUser>(`/users/${id}`, payload);
   return data;
 }

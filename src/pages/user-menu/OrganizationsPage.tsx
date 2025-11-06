@@ -23,12 +23,14 @@ export default function OrganizationsPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { authorId, loading: authLoading } = useAuth();
-
+  
+  // Use fallback authorId if not available from auth
+  const effectiveAuthorId = authorId || "62171ec163b90f7cc421c3a3";
+  
   const getOrganizations = async () => {
-    if (!authorId) return;
     setLoading(true);
     try {
-      const orgs = await fetchOrganizationsByAuthors([authorId]);
+      const orgs = await fetchOrganizationsByAuthors([effectiveAuthorId]);
       setOrganizations(orgs ?? []);
     } catch (e) {
       console.error("Error consultando organizaciones", e);
@@ -40,15 +42,8 @@ export default function OrganizationsPage() {
 
   useEffect(() => {
     if (authLoading) return;
-
-    if (!authorId) {
-      setOrganizations([]);
-      setLoading(false);
-      return;
-    }
-
     void getOrganizations();
-  }, [authLoading, authorId]);
+  }, [authLoading, effectiveAuthorId]);
 
   if (authLoading || loading) {
     return (

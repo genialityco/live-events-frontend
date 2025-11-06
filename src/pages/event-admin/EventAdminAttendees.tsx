@@ -94,7 +94,7 @@ export default function EventAdminAttendees() {
                   <b>Valor:</b> {group._id} <b>Cantidad:</b> {group.count}
                 </Accordion.Control>
                 <Accordion.Panel>
-                  {group.docs.map((doc: any, i: number) => (
+                  {group.docs.map((doc: any) => (
                     <Stack key={doc._id} p="xs" mb="xs" style={{ border: "1px solid #eee", borderRadius: 6 }}>
                       <div>
                         <b>ID:</b> {doc._id}
